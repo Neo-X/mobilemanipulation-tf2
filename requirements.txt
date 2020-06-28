@@ -117,3 +117,6 @@ Werkzeug==0.16.0
 wheel==0.33.6
 wrapt==1.11.2
 zipp==1.0.0
+pybullet
+sklearn
+tensorflow_addons
