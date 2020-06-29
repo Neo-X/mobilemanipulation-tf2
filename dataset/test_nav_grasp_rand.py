@@ -52,7 +52,7 @@ def main(args):
     #     max_velocity=20.0,
     #     max_acceleration=4.0,
     # )
-    inner_env = LocobotNavigationDQNGraspingEnv(
+    inner_env = LocobotNavigationVacuumRandomEnv(
         renders=True, grayscale=False, step_duration=1/60,
     )
 

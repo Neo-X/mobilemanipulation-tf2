@@ -116,6 +116,58 @@ class LocobotNavigationVacuumEnv(MixedLocobotNavigationEnv):
         obs = self.get_observation()
 
         return obs, reward, done, infos
+    
+import copy
+class LocobotNavigationVacuumRandomEnv(LocobotNavigationVacuumEnv):
+    def __init__(self, **params):
+
+        super().__init__(**params)
+        print("LocobotNavigationVacuumRandomEnv params:", self.params)
+        ## These defaults come from the camera C++ code.
+        ## https://github.com/bulletphysics/bullet3/blob/959b3e8258e7317405486cb29269915395801a61/examples/SharedMemory/plugins/tinyRendererPlugin/TinyRendererVisualShapeConverter.cpp#L1012
+        self._init_camera_params = {'lightDirection': np.array([-5, 200, -40]),
+                         'lightColor': np.array([1,1,1]),
+                         'lightDistance': 2,
+                         'shadow': 1,
+                         'lightAmbientCoeff': 0.6,
+                         'lightDiffuseCoeff': 0.35,
+                         'lightSpecularCoeff': 0.5,
+                         }
+        self._camera_params = copy.deepcopy(self._init_camera_params)
+
+    def reset(self):
+        obs = super().reset()
+        self.total_vacuum_actions = 0
+        self._camera_params = copy.deepcopy(self._init_camera_params)
+        return obs
+    
+    def render(self, *args, **kwargs):
+        
+        noise_scale=1.0
+        ### Might be better to make this more accurate to Bownian noise.
+        self._camera_params['lightDirection'] = np.clip(self._camera_params['lightDirection'] + np.random.normal(0,0.1*noise_scale,3), -1, 1)
+        self._camera_params['lightColor'] = np.clip(self._camera_params['lightColor'] + np.random.normal(0,0.1*noise_scale,3), 0, 1)
+        self._camera_params['lightDistance'] = np.clip(self._camera_params['lightDistance'] + np.random.normal(0, 0.01*noise_scale), 0, 10)
+        shadow = 1
+        self._camera_params['lightAmbientCoeff'] = np.clip(self._camera_params['lightAmbientCoeff'] + np.random.normal(0, 0.01* noise_scale), a_min=0.3, a_max=0.8)
+        self._camera_params['lightDiffuseCoeff'] = np.clip( self._camera_params['lightDiffuseCoeff'] + np.random.normal(0, 0.005 * noise_scale), 0.2, 0.5)
+        self._camera_params['lightSpecularCoeff'] = np.clip(self._camera_params['lightSpecularCoeff'] + np.random.normal(0, 0.001 * noise_scale), 0.03, 0.1)
+        return self.interface.render_camera(lightDirection=self._camera_params['lightDirection'], 
+                                            lightColor=self._camera_params['lightColor'], 
+                                            lightDistance=self._camera_params['lightDistance'], 
+                                            shadow=self._camera_params['shadow'], 
+                                            lightAmbientCoeff=self._camera_params['lightAmbientCoeff'],
+                                            lightDiffuseCoeff=self._camera_params['lightDiffuseCoeff'],
+                                            lightSpecularCoeff=self._camera_params['lightSpecularCoeff'],
+                                            use_aux=False)
+
+    def step(self, action):
+        # init return values
+        obs, reward, done, infos = super().step(action)
+        
+        
+
+        return obs, reward, done, infos
 
 
 

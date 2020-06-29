@@ -28,8 +28,14 @@ class Viewer:
         self.look_pos = np.array(look_pos)
         self.view_matrix = self.p.computeViewMatrix(self.camera_pos, self.look_pos, [0,0,1])
 
-    def get_image(self, width, height):
-        _, _, image, _, _ = self.p.getCameraImage(width, height, self.view_matrix, self.proj_matrix)
+    def get_image(self, width, height, **kwargs):
+        if ("lightDirection" in kwargs):
+            print ("kwargs:", kwargs)
+            _, _, image, _, _ = self.p.getCameraImage(width, height, self.view_matrix, self.proj_matrix, lightDirection=kwargs['lightDirection'], lightColor=kwargs['lightColor'], 
+                                                  lightDistance=kwargs['lightDistance'], shadow=kwargs['shadow'], lightAmbientCoeff=kwargs['lightAmbientCoeff'], 
+                                                  lightDiffuseCoeff=kwargs['lightDiffuseCoeff'], lightSpecularCoeff=kwargs['lightSpecularCoeff'])
+        else:
+            _, _, image, _, _ = self.p.getCameraImage(width, height, self.view_matrix, self.proj_matrix)
         return np.reshape(image, (height, width, 4))[:,:,:3]
 
 
@@ -468,7 +474,7 @@ class PybulletInterface:
         for _ in range(num_steps):
             self.step()
 
-    def render_camera(self, use_aux=False, size=None):
+    def render_camera(self, use_aux=False, size=None, **kwargs):
         """ Renders the scene
         Args:
             use_aux: determines whether this renders using the main camera or the auxilary camera.
@@ -499,7 +505,7 @@ class PybulletInterface:
             image_width = size
             image_height = size
             
-        image = camera.get_image(width=image_width, height=image_height)
+        image = camera.get_image(width=image_width, height=image_height, **kwargs)
         if self.grayscale:
             image = np.mean(image, axis=2).reshape((image_height, image_width, 1))
         return image.astype(np.uint8)

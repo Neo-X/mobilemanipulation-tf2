@@ -31,11 +31,8 @@ if __name__ == '__main__':
 
     env.seed(1234)
     
-    print("observation space min: ", env.observation_space.low)
-    print("observation space max: ", env.observation_space.high)
-    print("Actions space max: ", len(env.action_space.high))
-    print("Actions space min: ", env.action_space.low)
-    print("Actions space max: ", env.action_space.high)
+    print("observation space: ", env.observation_space)
+    print("Actions space: ", env.action_space)
     
     env.reset()
     for epoch in range(10):
@@ -44,6 +41,8 @@ if __name__ == '__main__':
         # while (True):
         for i in range(100):
             actions = env.action_space.sample()
+            print("actions: ", actions)
+            action = [1, 0, 0, 0]
             observation, reward,  done, info = env.step(actions)
             print ("Reward: ", reward, "Action: ", actions)
             print (info)

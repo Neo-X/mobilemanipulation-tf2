@@ -5,7 +5,8 @@
 from .nav_envs import ImageLocobotNavigationEnv, MixedLocobotNavigationEnv, MixedLocobotNavigationReachEnv
 from .grasp_envs import LocobotDiscreteGraspingEnv, LocobotContinuousMultistepGraspingEnv
 from .nav_grasp_envs import (
-    LocobotNavigationVacuumEnv, 
+    LocobotNavigationVacuumEnv,
+    LocobotNavigationVacuumRandomEnv, 
     LocobotNavigationDQNGraspingEnv, 
     LocobotNavigationVacuumRandomPerturbationEnv, 
     LocobotNavigationVacuumRNDPerturbationEnv)
