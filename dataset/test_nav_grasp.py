@@ -70,13 +70,26 @@ def main(args):
     while True:
         # save_obs(obs["pixels"], f"../images/obs{i}.png")
         # print("velocity:", obs["current_velocity"])
+        cmd = input().strip()
         try:
-                action = [1, 0] + [0, 0]
+            if cmd == "exit":
+                break
+            elif cmd == "r":
+                obs = env.reset()
+                i = 0
+                continue
+            elif cmd[0] == "m":
+                action = [1, 0] + [float(x) for x in cmd[2:].split(" ")]
+                action[3]
+            elif cmd[0] == "g":
+                action = [0, 1, 0, 0]
+            else:
+                action = [float(x) for x in cmd.split(" ")]
+                action[3]
         except:
             print("cannot parse")
             continue
-            
-        print ("action: ", action)
+
         obs, rew, done, infos = env.step(action)
         i += 1
 
